@@ -14,6 +14,7 @@ type
    public
       constructor Create(CaminhoServidor, Usuario, Senha: String; TipoBanco: TTipoBanco);
       destructor Destroy;  override;
+   end;
 end;
 
 implementation
@@ -41,9 +42,5 @@ begin
 
    FreeAndNil(FConexao);
 end;
-
-{ TConexaoBancoFirebird }
-
-
 
 end.

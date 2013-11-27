@@ -42,8 +42,4 @@ begin
    FreeAndNil(FConexao);
 end;
 
-{ TConexaoBancoFirebird }
-
-
-
 end.

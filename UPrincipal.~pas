@@ -31,10 +31,9 @@ var
    Tabelas: TListarTabelasSQLServer;
    Dados: TClientDataSet;
 begin
-   SQLConnection1 := TConexaoBancoFactory.CriarConexaoBanco('localhost\SQL2012', 'testemvc', 'sa', 'masterkey', tbSQLServer) ;
+   SQLConnection1 := TConexaoBancoFactory.CriarConexaoBanco('localhost\SQL2012', 'testemvc', 'sa', 'm@ster123', tbSQLServer) ;
    SQLConnection1.Open;
-
-
+   
    Tabelas := TListarTabelasSQLServer.Create(SQLConnection1);
    Dados := Tabelas.TabelasBanco;
 

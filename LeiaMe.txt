@@ -1,0 +1,36 @@
+*** Versão 1.0 ***
+
+- CRIADOR
+	Nome: Diego Camara Miranda
+	E-mail: diego_miranda@outlook.com
+	
+- INTRODUÇÃO
+	A maioria das linguagens na atualidade contam com um framekorw que permite abrir o banco de dados e montar as telas de cadastro do sistema sem muitas dificuldades, porém até o presente momento, esta situação ainda não estava presente no Delphi, o que trás uma grande perda de tempo para os desenvolvedores.
+
+- OBJETIVO
+	Desenvolver um aplicativo que abra um banco de dados e que seja inteligente o bastante para montar as telas de cadastros de todas as tabelas do sistema, inclusive em situações de tabela cabeçalho e itens.
+
+- LICENÇA
+	O Lumiar será disponibilizado gratuitamente para toda a comunidade Delphi, devendo sempre ser mantida a referência ao seu criador inicial.
+	Qualquer pessoa poderá alterá-lo livremente, adicionando ou alterando recursos, porém toda e qualquer alteração deve ser remetida ao projeto, para que toda a comunidade, após aprovação do criador, tenha acesso.
+
+- VERSÕES DO DELPHI COMPATÍVEIS:
+	Todas as versões do Delphi apartir da versão 6.
+
+- BANCOS DE DADOS COMPATÍVEIS
+	* SQL Server
+	* Firebird
+	* Interbase
+
+- TIPOS DE CAMPOS DAS TABELAS QUE PODERÃO SER LISTADOS
+	* BIGINT
+	* Inteiro
+	* Numeric
+	* Double precision
+	* Date
+	* DateTime
+	* Time
+	* TimeStamp
+	* String
+	* Char
+	* Boolean / Bit

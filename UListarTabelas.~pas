@@ -11,7 +11,7 @@ type
       FTabelas: TClientDataSet;
 
       procedure CriarClientDataSetTabelas;
-      procedure PreencherTabelas; virtual; abstract;
+      function GetSQLNomeTabelas: String; virtual; abstract;
    public
       constructor Create(Conexao: TSQLConnection);
       destructor Destroy;
@@ -22,10 +22,20 @@ end;
 type
    TListarTabelasSQLServer = class(TListarTabelas)
    private
-      procedure PreencherTabelas; override;
+      function GetSQLNomeTabelas: String;  override;
 end;
 
+type
+   TListarTabelasFirebird = class(TListarTabelas)
+   private
+      function GetSQLNomeTabelas: String;  override;
+end;
 
+type
+   TListarTabelasInterbase = class(TListarTabelas)
+   private
+      function GetSQLNomeTabelas: String;  override;
+end;
 implementation
 
 { TListarTabelas }
@@ -33,6 +43,8 @@ implementation
 constructor TListarTabelas.Create(Conexao: TSQLConnection);
 begin
    FConexao := Conexao;
+
+   CriarClientDataSetTabelas;
 end;
 
 procedure TListarTabelas.CriarClientDataSetTabelas;
@@ -53,39 +65,23 @@ begin
 end;
 
 function TListarTabelas.TabelasBanco: TClientDataSet;
-begin
-   PreencherTabelas;
-end;
-
-{ TListarTabelasSQLServer }
-
-procedure TListarTabelasSQLServer.PreencherTabelas;
 var
    QueryAux: TSQLQuery;
    
-   function GetSQLTabelasBanco: String;
-   begin
-      Result := 'SELECT ID, '+ #13#10 +
-                '       NAME '+ #13#10 +
-                '  FROM SYSOBJECTS '+ #13#10 +
-                ' WHERE XTYPE='+#39+'U'+#39;
-   end;
-
    procedure PreencherCamposDataSet;
    begin
       FTabelas.Insert;
       FTabelas.FieldByName('Codigo').AsInteger := QueryAux.FieldByName('ID').AsInteger;
-      FTabelas.FieldByName('NomeTabela').AsString := QueryAux.FieldByName('NAME').AsString;
+      FTabelas.FieldByName('NomeTabela').AsString := QueryAux.FieldByName('NOMETABELA').AsString;
       FTabelas.Post;
    end;
 begin
    try
       QueryAux := TSQLQuery.Create(nil);
       QueryAux.SQLConnection := FConexao;
-
-      QueryAux.SQL.Text := GetSQLTabelasBanco;
+      QueryAux.SQL.Text := GetSQLNomeTabelas;
       QueryAux.Open;
-      
+
       while not QueryAux.Eof do
       begin
          PreencherCamposDataSet;
@@ -95,6 +91,41 @@ begin
    finally
       FreeAndNil(QueryAux);
    end;
+
+   Result := FTabelas;
 end;
+
+{ TListarTabelasSQLServer }
+
+function TListarTabelasSQLServer.GetSQLNomeTabelas: String;
+begin
+   Result := 'SELECT ID, '+ #13#10 +
+             '       NAME as NOMETABELA'+ #13#10 +
+             '  FROM SYSOBJECTS '+ #13#10 +
+             ' WHERE XTYPE='+#39+'U'+#39;
+end;
+
+{ TListarTabelasInterbase }
+
+function TListarTabelasInterbase.GetSQLNomeTabelas: String;
+begin
+   Result := 'SELECT RDB$RELATION_ID as ID,' + #13#10 + 
+                '       RDB$RELATION_NAME as NOMETABELA' + #13#10 +
+                '  FROM RDB$RELATIONS' + #13#10 +
+                ' WHERE RDB$VIEW_BLR IS NULL' + #13#10 +
+                '   AND (RDB$SYSTEM_FLAG = 0 OR RDB$SYSTEM_FLAG IS NULL)';
+end;
+
+{ TListarTabelasFirebird }
+
+function TListarTabelasFirebird.GetSQLNomeTabelas: String;
+begin
+   Result := 'SELECT RDB$RELATION_ID as ID,' + #13#10 + 
+             '       RDB$RELATION_NAME as NOMETABELA' + #13#10 +
+             '  FROM RDB$RELATIONS' + #13#10 +
+             ' WHERE RDB$VIEW_BLR IS NULL' + #13#10 +
+             '   AND (RDB$SYSTEM_FLAG = 0 OR RDB$SYSTEM_FLAG IS NULL)';
+end;
+
 
 end.

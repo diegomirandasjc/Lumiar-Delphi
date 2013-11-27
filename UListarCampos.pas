@@ -1,16 +1,16 @@
-unit UListarTabelas;
+unit UListarCampos;
 
 interface
 
 uses Classes, UConexaoBanco, UDefinicoes, SqlExpr, DB, DBClient, SysUtils;
 
 type
-   TListarTabelas = class
+   TListarCampos = class
    private
       FConexao: TSQLConnection;
       FTabelas: TClientDataSet;
 
-      procedure CriarClientDataSetTabelas;
+      procedure CriarClientDataSetCampos;
       function GetSQLNomeTabelas: String; virtual; abstract;
    public
       constructor Create(Conexao: TSQLConnection);
@@ -20,34 +20,34 @@ type
 end;
 
 type
-   TListarTabelasSQLServer = class(TListarTabelas)
+   TListarCamposSQLServer = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 
 type
-   TListarTabelasFirebird = class(TListarTabelas)
+   TListarCamposFirebird = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 
 type
-   TListarTabelasInterbase = class(TListarTabelas)
+   TListarCamposInterbase = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 implementation
 
-{ TListarTabelas }
+{ TListarCampos }
 
-constructor TListarTabelas.Create(Conexao: TSQLConnection);
+constructor TListarCampos.Create(Conexao: TSQLConnection);
 begin
    FConexao := Conexao;
 
-   CriarClientDataSetTabelas;
+   CriarClientDataSetCampos;
 end;
 
-procedure TListarTabelas.CriarClientDataSetTabelas;
+procedure TListarCampos.CriarClientDataSetCampos;
 begin
    FTabelas := TClientDataSet.Create(nil);
 
@@ -58,13 +58,13 @@ begin
    FTabelas.CreateDataSet;
 end;
 
-destructor TListarTabelas.Destroy;
+destructor TListarCampos.Destroy;
 begin
    FreeAndNil(FTabelas);
    FreeAndNil(FConexao);
 end;
 
-function TListarTabelas.TabelasBanco: TClientDataSet;
+function TListarCampos.TabelasBanco: TClientDataSet;
 var
    QueryAux: TSQLQuery;
    
@@ -95,9 +95,9 @@ begin
    Result := FTabelas;
 end;
 
-{ TListarTabelasSQLServer }
+{ TListarCamposSQLServer }
 
-function TListarTabelasSQLServer.GetSQLNomeTabelas: String;
+function TListarCamposSQLServer.GetSQLNomeTabelas: String;
 begin
    Result := 'SELECT ID, '+ #13#10 +
              '       NAME as NOMETABELA'+ #13#10 +
@@ -105,9 +105,9 @@ begin
              ' WHERE XTYPE='+#39+'U'+#39;
 end;
 
-{ TListarTabelasInterbase }
+{ TListarCamposInterbase }
 
-function TListarTabelasInterbase.GetSQLNomeTabelas: String;
+function TListarCamposInterbase.GetSQLNomeTabelas: String;
 begin
    Result := 'SELECT RDB$RELATION_ID as ID,' + #13#10 + 
                 '       RDB$RELATION_NAME as NOMETABELA' + #13#10 +
@@ -116,9 +116,9 @@ begin
                 '   AND (RDB$SYSTEM_FLAG = 0 OR RDB$SYSTEM_FLAG IS NULL)';
 end;
 
-{ TListarTabelasFirebird }
+{ TListarCamposFirebird }
 
-function TListarTabelasFirebird.GetSQLNomeTabelas: String;
+function TListarCamposFirebird.GetSQLNomeTabelas: String;
 begin
    Result := 'SELECT RDB$RELATION_ID as ID,' + #13#10 + 
              '       RDB$RELATION_NAME as NOMETABELA' + #13#10 +
@@ -129,3 +129,4 @@ end;
 
 
 end.
+
