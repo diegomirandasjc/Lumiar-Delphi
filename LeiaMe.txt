@@ -19,9 +19,9 @@
 
 - BANCOS DE DADOS COMPATÍVEIS
 	* SQL Server
-	* Firebird
+	* Firebird 1.x / 2.x
 	* Interbase
-
+	
 - TIPOS DE CAMPOS DAS TABELAS QUE PODERÃO SER LISTADOS
 	* BIGINT
 	* Inteiro
