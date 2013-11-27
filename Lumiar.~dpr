@@ -5,7 +5,8 @@ uses
   UUtilitarioBancoDados in 'UUtilitarioBancoDados.pas',
   UConexaoBanco in 'UConexaoBanco.pas',
   UPrincipal in 'UPrincipal.pas' {Form1},
-  UDefinicoes in 'UDefinicoes.pas';
+  UDefinicoes in 'UDefinicoes.pas',
+  UListarTabelas in 'UListarTabelas.pas';
 
 {$R *.res}
 

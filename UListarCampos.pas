@@ -36,6 +36,7 @@ type
    private
       function GetSQLNomeTabelas: String; override;
 end;
+
 implementation
 
 { TListarCampos }

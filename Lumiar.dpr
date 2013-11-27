@@ -6,7 +6,8 @@ uses
   UConexaoBanco in 'UConexaoBanco.pas',
   UPrincipal in 'UPrincipal.pas' {Form1},
   UDefinicoes in 'UDefinicoes.pas',
-  UListarTabelas in 'UListarTabelas.pas';
+  UListarTabelas in 'UListarTabelas.pas',
+  UListarCampos in 'UListarCampos.pas';
 
 {$R *.res}
 

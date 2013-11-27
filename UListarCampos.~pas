@@ -22,19 +22,19 @@ end;
 type
    TListarCamposSQLServer = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 
 type
    TListarCamposFirebird = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 
 type
    TListarCamposInterbase = class(TListarCampos)
    private
-      function GetSQLNomeTabelas: String;  override;
+      function GetSQLNomeTabelas: String; override;
 end;
 implementation
 
