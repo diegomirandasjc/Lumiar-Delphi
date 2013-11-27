@@ -1,0 +1,13 @@
+program Lumiar;
+
+uses
+  Forms,
+  UUtilitarioBancoDados in 'UUtilitarioBancoDados.pas',
+  UPrincipal in 'UPrincipal.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.Run;
+end.

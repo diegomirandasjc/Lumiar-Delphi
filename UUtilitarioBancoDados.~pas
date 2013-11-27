@@ -1,0 +1,88 @@
+unit UUtilitarioBancoDados;
+
+interface
+
+uses Classes, SqlExpr;
+
+type
+   TTipoBanco = (tbSQLServer, tbFirebird, tbInterbase);
+
+type
+   TBancoDados = class
+   private
+      FConexao: TSQLConnection;
+
+      FTipoBanco: TTipoBanco;
+      procedure CriarConexaoBanco;
+   public
+      constructor Create(CaminhoServidor, Usuario, Senha: String; TipoBanco: TTipoBanco);
+      destructor Destroy;  override;
+end;
+
+type
+   TConexaoBanco = class
+   private
+      FCaminhoServidor: String;
+      FUsuario: String;
+      FSenha: String;
+
+      function GetConexaoConfigurada: TSQLConnection; virtual; abstract;
+   public
+      constructor Create(CaminhoServidor, Usuario, Senha: String);
+      function GetConexaoBanco: TSQLConnection;
+end;
+
+type
+   TConexaoBancoFirebird = class(TConexaoBanco)
+   private
+      function GetConexaoConfigurada: TSQLConnection; override;
+end;
+
+
+implementation
+
+uses SysUtils;
+
+{ TBancoDados }
+
+constructor TBancoDados.Create(CaminhoServidor, Usuario, Senha: String;
+  TipoBanco: TTipoBanco);
+begin
+
+   FTipoBanco := TipoBanco;
+
+   CriarConexaoBanco;
+end;
+
+procedure TBancoDados.CriarConexaoBanco;
+begin
+   FConexao := TSQLConnection.Create(nil);
+end;
+
+destructor TBancoDados.Destroy;
+begin
+   inherited;
+
+   FreeAndNil(FConexao);
+end;
+
+{ TConexaoBancoFirebird }
+
+function TConexaoBancoFirebird.GetConexaoConfigurada: TSQLConnection;
+begin
+   Result := TSQLConnection.Create(nil);
+
+   Result.ConnectionName := 'IBConnection';
+   Result.DriverName := 'Firebird';
+   Result.GetDriverFunc := 'getSQLDriverINTERBASE';
+   Result.LibraryName := 'dbexpint.dll';
+   Result.VendorLib := GetDiretorioAplicativo + 'gds32.dll';
+
+   Result.Params.Clear;
+   Result.Params.Values['Database'] := GetPathBanco;
+   Result.Params.Values['User_Name'] := 'SYSDBA';
+   Result.Params.Values['Password'] := 'masterkey';
+   Result.Params.Values['SQLDialect'] := '3';
+end;
+
+end.
