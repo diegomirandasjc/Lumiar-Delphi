@@ -26,9 +26,7 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-   SQLConnection1 := TConexaoBancoFactory.CriarConexaoBanco('localhost:c:\teste\teste.fdb', 'SYSDBA', 'masterkey', tbFirebird) ;
-
-   ShowMessage(SQLConnection1.ConnectionName);
+   SQLConnection1 := TConexaoBancoFactory.CriarConexaoBanco('localhost', 'testemvc', 'SYSDBA', 'masterkey', tbSQLServer) ;
 end;
 
 end.

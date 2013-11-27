@@ -4,8 +4,6 @@ interface
 
 uses Classes, SqlExpr, UDefinicoes;
 
-
-
 type
    TBancoDados = class
    private
@@ -18,11 +16,6 @@ type
       destructor Destroy;  override;
 end;
 
-
-
-
-
-
 implementation
 
 uses SysUtils;
@@ -32,7 +25,6 @@ uses SysUtils;
 constructor TBancoDados.Create(CaminhoServidor, Usuario, Senha: String;
   TipoBanco: TTipoBanco);
 begin
-
    FTipoBanco := TipoBanco;
 
    CriarConexaoBanco;

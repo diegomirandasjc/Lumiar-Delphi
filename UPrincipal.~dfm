@@ -14,8 +14,8 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
-    Left = 344
-    Top = 120
+    Left = 336
+    Top = 192
     Width = 75
     Height = 25
     Caption = 'Button1'
@@ -23,26 +23,23 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object SQLConnection1: TSQLConnection
-    ConnectionName = 'IBConnection'
-    DriverName = 'Interbase'
-    GetDriverFunc = 'getSQLDriverINTERBASE'
-    LibraryName = 'dbexpint.dll'
+    ConnectionName = 'MSSQLConnection'
+    DriverName = 'MSSQL'
+    GetDriverFunc = 'getSQLDriverMSSQL'
+    LibraryName = 'dbexpmss.dll'
+    LoginPrompt = False
     Params.Strings = (
-      'DriverName=Interbase'
-      'Database=localhost:C:\Firebird\MDICOMCONTINGENCIA.FDB'
-      'RoleName=RoleName'
-      'User_Name=SYSDBA'
-      'Password=masterkey'
-      'ServerCharSet='
-      'SQLDialect=3'
+      'DriverName=MSSQL'
+      'HostName=pro26\SQL2012'
+      'DataBase=testemvc'
+      'User_Name=sa'
+      'Password=m@ster123'
+      'BlobSize=-1'
       'ErrorResourceFile='
       'LocaleCode=0000'
-      'BlobSize=-1'
-      'CommitRetain=False'
-      'WaitOnLocks=True'
-      'Interbase TransIsolation=ReadCommited'
-      'Trim Char=False')
-    VendorLib = 'gds32.dll'
+      'MSSQL TransIsolation=ReadCommited'
+      'OS Authentication=False')
+    VendorLib = 'sqloledb.dll'
     Left = 160
     Top = 40
   end
