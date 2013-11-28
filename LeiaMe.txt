@@ -5,7 +5,7 @@
 	E-mail: diego_miranda@outlook.com
 	
 - INTRODUÇÃO
-	A maioria das linguagens na atualidade contam com um framekorw que permite abrir o banco de dados e montar as telas de cadastro do sistema sem muitas dificuldades, porém até o presente momento, esta situação ainda não estava presente no Delphi, o que trás uma grande perda de tempo para os desenvolvedores.
+	A maioria das linguagens na atualidade contam com um framework que permite abrir o banco de dados e montar as telas de cadastro do sistema sem muitas dificuldades, porém até o presente momento, esta situação ainda não estava presente no Delphi, o que trás uma grande perda de tempo para os desenvolvedores.
 
 - OBJETIVO
 	Desenvolver um aplicativo que abra um banco de dados e que seja inteligente o bastante para montar as telas de cadastros de todas as tabelas do sistema, inclusive em situações de tabela cabeçalho e itens.
@@ -31,6 +31,6 @@
 	* DateTime
 	* Time
 	* TimeStamp
-	* String
+	* Varchar
 	* Char
-	* Boolean / Bit
+	* SMALLINT / Bit
