@@ -5,10 +5,10 @@ interface
 type
    TTipoBanco = (tbSQLServer, tbFirebird, tbInterbase);
    TTipoCampo = (tcUnknown, tcBigInt, tcInteger,
-                 tcNumeric, tcDoublePrecision, tcDate,
+                 tcNumeric, tcDecimal, tcDate,
                  tcTime, tcDateTime, tcTimeStamp,
                  tcVarchar, tcChar, tcSmallInt,
-                 tcBit, tcDecimal);
+                 tcBit);
 implementation
 
 end.
