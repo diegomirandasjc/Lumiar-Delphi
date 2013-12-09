@@ -40,7 +40,6 @@ object Form1: TForm1
       'MSSQL TransIsolation=ReadCommited'
       'OS Authentication=False')
     VendorLib = 'sqloledb.dll'
-    Connected = True
     Left = 200
     Top = 48
   end
