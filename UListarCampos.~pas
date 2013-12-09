@@ -18,7 +18,8 @@ type
       function GetTipo: TTipoCampo; virtual; abstract;
       function GetTamanho: Integer; virtual; abstract;
       function GetPrecisao: Integer; virtual; abstract;
-      procedure MarcarChavesPrimarias(NomeTabela: String); virtual; abstract;
+      procedure MarcarChavesPrimarias(NomeTabela: String);
+      function GetSQLChavesPrimarias: String; virtual; abstract;
    public
       constructor Create(Conexao: TSQLConnection);
       destructor Destroy;
@@ -33,7 +34,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      procedure MarcarChavesPrimarias(NomeTabela: String); override;
+      function GetSQLChavesPrimarias: String; override;
 end;
 
 type
@@ -43,7 +44,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      procedure MarcarChavesPrimarias(NomeTabela: String); override;
+      function GetSQLChavesPrimarias: String; override;
 end;
 
 type
@@ -53,7 +54,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      procedure MarcarChavesPrimarias(NomeTabela: String); override;
+      function GetSQLChavesPrimarias: String; override;
 end;
 
 implementation
@@ -129,12 +130,32 @@ begin
          FQueryAux.Next;
       end;
 
-      MarcarChavesPrimarias(NomeTabela);
+//      MarcarChavesPrimarias(NomeTabela);
    finally
       FQueryAux.Close;
    end;
 
    Result := FTabelas;
+end;
+
+procedure TListarCampos.MarcarChavesPrimarias(NomeTabela: String);
+begin
+  try
+      FQueryAux.SQL.Text := GetSQLChavesPrimarias;
+      FQueryAux.ParamByName('NOMETABELA').AsString := NomeTabela;
+      FQueryAux.Open;
+
+      while not FQueryAux.Eof do
+      begin
+         PreencherCamposDataSet;
+
+         FQueryAux.Next;
+      end;
+
+//      MarcarChavesPrimarias(NomeTabela);
+   finally
+      FQueryAux.Close;
+   end;
 end;
 
 { TListarCamposSQLServer }
@@ -166,6 +187,11 @@ begin
              '   AND C.[user_type_id] = TI.[user_type_id]';
 end;
 
+
+function TListarCamposSQLServer.GetSQLChavesPrimarias: String;
+begin
+
+end;
 
 function TListarCamposSQLServer.GetTamanho: Integer;
 begin
@@ -259,12 +285,6 @@ begin
    end;
 end;
 
-procedure TListarCamposSQLServer.MarcarChavesPrimarias(NomeTabela: String);
-begin
-  inherited;
-
-end;
-
 { TListarCamposInterbase }
 
 function TListarCamposInterbase.GetPrecisao: Integer;
@@ -288,6 +308,16 @@ begin
              '    ON C.RDB$TYPE = B.RDB$FIELD_TYPE' + #13#10 +
              '   AND C.RDB$FIELD_NAME = ''RDB$FIELD_TYPE''' + #13#10 +
              ' WHERE A.RDB$RELATION_NAME = :NOMETABELA';
+end;
+
+function TListarCamposInterbase.GetSQLChavesPrimarias: String;
+begin
+   Result := 'SELECT RDB$FIELD_NAME' + #13#10 +
+             '  FROM RDB$RELATION_CONSTRAINTS C, RDB$INDEX_SEGMENTS S' + #13#10 +
+             ' WHERE C.RDB$RELATION_NAME = :NOMETABELA' + #13#10 +
+             '   AND C.RDB$CONSTRAINT_TYPE = ''PRIMARY KEY''' + #13#10 +
+             '   AND S.RDB$INDEX_NAME = C.RDB$INDEX_NAME' + #13#10 +
+             ' ORDER BY RDB$FIELD_POSITION';
 end;
 
 function TListarCamposInterbase.GetTamanho: Integer;
@@ -382,12 +412,6 @@ begin
    end;
 end;
 
-procedure TListarCamposInterbase.MarcarChavesPrimarias(NomeTabela: String);
-begin
-  inherited;
-   
-end;
-
 { TListarCamposFirebird }
 
 function TListarCamposFirebird.GetPrecisao: Integer;
@@ -411,6 +435,16 @@ begin
              '    ON C.RDB$TYPE = B.RDB$FIELD_TYPE' + #13#10 +
              '   AND C.RDB$FIELD_NAME = ''RDB$FIELD_TYPE''' + #13#10 +
              ' WHERE A.RDB$RELATION_NAME = :NOMETABELA';
+end;
+
+function TListarCamposFirebird.GetSQLChavesPrimarias: String;
+begin
+   Result := 'SELECT RDB$FIELD_NAME' + #13#10 +
+             '  FROM RDB$RELATION_CONSTRAINTS C, RDB$INDEX_SEGMENTS S' + #13#10 +
+             ' WHERE C.RDB$RELATION_NAME = :NOMETABELA' + #13#10 +
+             '   AND C.RDB$CONSTRAINT_TYPE = ''PRIMARY KEY''' + #13#10 +
+             '   AND S.RDB$INDEX_NAME = C.RDB$INDEX_NAME' + #13#10 +
+             ' ORDER BY RDB$FIELD_POSITION';
 end;
 
 function TListarCamposFirebird.GetTamanho: Integer;
@@ -505,11 +539,6 @@ begin
    end;
 end;
 
-procedure TListarCamposFirebird.MarcarChavesPrimarias(NomeTabela: String);
-begin
-  inherited;
-
-end;
 
 end.
 
