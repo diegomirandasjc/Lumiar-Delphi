@@ -8,18 +8,19 @@ type
    TListarCampos = class
    private
       FConexao: TSQLConnection;
-      FTabelas: TClientDataSet;
+      FCampos: TClientDataSet;
       FQueryAux: TSQLQuery;
       
       procedure CriarClientDataSetCampos;
       procedure CriarObjetosAuxiliares;
       procedure PreencherCamposDataSet;
+      procedure MarcarCampoDataSetChavePrimaria;
       function GetSQLCampos: String; virtual; abstract;
       function GetTipo: TTipoCampo; virtual; abstract;
       function GetTamanho: Integer; virtual; abstract;
       function GetPrecisao: Integer; virtual; abstract;
       procedure MarcarChavesPrimarias(NomeTabela: String);
-      function GetSQLChavesPrimarias: String; virtual; abstract;
+      function GetSQLCamposChavesPrimarias: String; virtual; abstract;
    public
       constructor Create(Conexao: TSQLConnection);
       destructor Destroy;
@@ -34,7 +35,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      function GetSQLChavesPrimarias: String; override;
+      function GetSQLCamposChavesPrimarias: String; override;
 end;
 
 type
@@ -44,7 +45,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      function GetSQLChavesPrimarias: String; override;
+      function GetSQLCamposChavesPrimarias: String; override;
 end;
 
 type
@@ -54,7 +55,7 @@ type
       function GetTipo: TTipoCampo; override;
       function GetTamanho: Integer; override;
       function GetPrecisao: Integer; override;
-      function GetSQLChavesPrimarias: String; override;
+      function GetSQLCamposChavesPrimarias: String; override;
 end;
 
 implementation
@@ -71,21 +72,21 @@ end;
 
 procedure TListarCampos.CriarClientDataSetCampos;
 begin
-   FTabelas := TClientDataSet.Create(nil);
+   FCampos := TClientDataSet.Create(nil);
 
-   FTabelas.FieldDefs.Add('Codigo', ftInteger);
-   FTabelas.FieldDefs.Add('NomeCampo', ftString, 100);
-   FTabelas.FieldDefs.Add('Descricao', ftString, 8000);
-   FTabelas.FieldDefs.Add('Tipo', ftSmallint);
-   FTabelas.FieldDefs.Add('Tamanho', ftInteger);
-   FTabelas.FieldDefs.Add('ValorMaximo', ftInteger);
-   FTabelas.FieldDefs.Add('ValorMinimo', ftInteger);
-   FTabelas.FieldDefs.Add('Precisao', ftInteger);
-   FTabelas.FieldDefs.Add('Obrigatorio', ftBoolean);
-   FTabelas.FieldDefs.Add('ChavePrimaria', ftBoolean);
+   FCampos.FieldDefs.Add('Codigo', ftInteger);
+   FCampos.FieldDefs.Add('NomeCampo', ftString, 100);
+   FCampos.FieldDefs.Add('Descricao', ftString, 8000);
+   FCampos.FieldDefs.Add('Tipo', ftSmallint);
+   FCampos.FieldDefs.Add('Tamanho', ftInteger);
+   FCampos.FieldDefs.Add('ValorMaximo', ftInteger);
+   FCampos.FieldDefs.Add('ValorMinimo', ftInteger);
+   FCampos.FieldDefs.Add('Precisao', ftInteger);
+   FCampos.FieldDefs.Add('Obrigatorio', ftBoolean);
+   FCampos.FieldDefs.Add('ChavePrimaria', ftBoolean);
 
 
-   FTabelas.CreateDataSet;
+   FCampos.CreateDataSet;
 end;
 
 procedure TListarCampos.CriarObjetosAuxiliares;
@@ -96,24 +97,25 @@ end;
 
 destructor TListarCampos.Destroy;
 begin
-   FreeAndNil(FTabelas);
+   FreeAndNil(FCampos);
    FreeAndNil(FQueryAux);
    FreeAndNil(FConexao);
 end;
 
 procedure TListarCampos.PreencherCamposDataSet;
 begin
-   FTabelas.Insert;
-   FTabelas.FieldByName('Codigo').AsInteger        := FQueryAux.FieldByName('ID').AsInteger;
-   FTabelas.FieldByName('NomeCampo').AsString      := FQueryAux.FieldByName('NOMECAMPO').AsString;
-   FTabelas.FieldByName('Descricao').AsString      := FQueryAux.FieldByName('TIPO').AsString;
-   FTabelas.FieldByName('Tipo').AsInteger          := Integer(GetTipo);
-   FTabelas.FieldByName('Tamanho').AsInteger       := GetTamanho;
-   FTabelas.FieldByName('ValorMaximo').AsInteger   := 0;
-   FTabelas.FieldByName('ValorMinimo').AsInteger   := 0;
-   FTabelas.FieldByName('Precisao').AsInteger      := GetPrecisao;
-   FTabelas.FieldByName('Obrigatorio').AsBoolean   := FQueryAux.FieldByName('OBRIGATORIO').AsBoolean;
-   FTabelas.Post;
+   FCampos.Insert;
+   FCampos.FieldByName('Codigo').AsInteger        := FQueryAux.FieldByName('ID').AsInteger;
+   FCampos.FieldByName('NomeCampo').AsString      := FQueryAux.FieldByName('NOMECAMPO').AsString;
+   FCampos.FieldByName('Descricao').AsString      := FQueryAux.FieldByName('TIPO').AsString;
+   FCampos.FieldByName('Tipo').AsInteger          := Integer(GetTipo);
+   FCampos.FieldByName('Tamanho').AsInteger       := GetTamanho;
+   FCampos.FieldByName('ValorMaximo').AsInteger   := 0;
+   FCampos.FieldByName('ValorMinimo').AsInteger   := 0;
+   FCampos.FieldByName('Precisao').AsInteger      := GetPrecisao;
+   FCampos.FieldByName('Obrigatorio').AsBoolean   := FQueryAux.FieldByName('OBRIGATORIO').AsBoolean;
+   FCampos.FieldByName('ChavePrimaria').AsBoolean := False;
+   FCampos.Post;
 end;
 
 function TListarCampos.CamposTabela(NomeTabela: String): TClientDataSet;
@@ -135,26 +137,36 @@ begin
       FQueryAux.Close;
    end;
 
-   Result := FTabelas;
+   Result := FCampos;
 end;
 
 procedure TListarCampos.MarcarChavesPrimarias(NomeTabela: String);
 begin
   try
-      FQueryAux.SQL.Text := GetSQLChavesPrimarias;
+      FQueryAux.SQL.Text := GetSQLCamposChavesPrimarias;
       FQueryAux.ParamByName('NOMETABELA').AsString := NomeTabela;
       FQueryAux.Open;
 
       while not FQueryAux.Eof do
       begin
-         PreencherCamposDataSet;
+         MarcarCampoDataSetChavePrimaria;
 
          FQueryAux.Next;
       end;
-
-//      MarcarChavesPrimarias(NomeTabela);
    finally
       FQueryAux.Close;
+   end;
+end;
+
+procedure TListarCampos.MarcarCampoDataSetChavePrimaria;
+var
+   i: Integer;
+begin
+   If (FCampos.Locate('NomeCampo', FQueryAux.Fields[0].AsString, [loPartialKey])) Then
+   begin
+      FCampos.Edit;
+      FCampos.FieldByName('ChavePrimaria').AsBoolean := True;
+      FCampos.Post;
    end;
 end;
 
@@ -188,9 +200,11 @@ begin
 end;
 
 
-function TListarCamposSQLServer.GetSQLChavesPrimarias: String;
+function TListarCamposSQLServer.GetSQLCamposChavesPrimarias: String;
 begin
-
+   Result :=  'SELECT COLUMN_NAME as CAMPO' + #13#10 +
+              '  FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE' + #13#10 +
+              ' WHERE TABLE_NAME = :NOMETABELA';
 end;
 
 function TListarCamposSQLServer.GetTamanho: Integer;
@@ -310,9 +324,9 @@ begin
              ' WHERE A.RDB$RELATION_NAME = :NOMETABELA';
 end;
 
-function TListarCamposInterbase.GetSQLChavesPrimarias: String;
+function TListarCamposInterbase.GetSQLCamposChavesPrimarias: String;
 begin
-   Result := 'SELECT RDB$FIELD_NAME' + #13#10 +
+   Result := 'SELECT RDB$FIELD_NAME as CAMPO' + #13#10 +
              '  FROM RDB$RELATION_CONSTRAINTS C, RDB$INDEX_SEGMENTS S' + #13#10 +
              ' WHERE C.RDB$RELATION_NAME = :NOMETABELA' + #13#10 +
              '   AND C.RDB$CONSTRAINT_TYPE = ''PRIMARY KEY''' + #13#10 +
@@ -437,9 +451,9 @@ begin
              ' WHERE A.RDB$RELATION_NAME = :NOMETABELA';
 end;
 
-function TListarCamposFirebird.GetSQLChavesPrimarias: String;
+function TListarCamposFirebird.GetSQLCamposChavesPrimarias: String;
 begin
-   Result := 'SELECT RDB$FIELD_NAME' + #13#10 +
+   Result := 'SELECT RDB$FIELD_NAME as CAMPO' + #13#10 +
              '  FROM RDB$RELATION_CONSTRAINTS C, RDB$INDEX_SEGMENTS S' + #13#10 +
              ' WHERE C.RDB$RELATION_NAME = :NOMETABELA' + #13#10 +
              '   AND C.RDB$CONSTRAINT_TYPE = ''PRIMARY KEY''' + #13#10 +
